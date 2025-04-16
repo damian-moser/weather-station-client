@@ -9,12 +9,18 @@
 
 <script lang="ts" setup>
 import VueApexCharts from "vue3-apexcharts";
-import { ref } from "vue";
+import { ref, watch } from "vue";
+import type { Data } from "../data";
+import util from "../util";
+
+const props = defineProps<{
+  data: Data[];
+}>();
 
 const series = ref([
   {
-    name: "Temperatur",
-    data: [21, 22, 20, 21, 22, 30, 25, 15, 10, 55, 23, 24, 26],
+    name: "Wert",
+    data: props.data.map((data) => data.value),
   },
 ]);
 
@@ -24,13 +30,34 @@ const chartOptions = ref({
     height: 350,
   },
   title: {
-    text: "Temperaturverlauf",
+    text: `Werte angezeigt in ${props.data[0] && props.data[0].unit}`,
   },
   xaxis: {
-    categories: ["12:00", "12:05", "12:10", "12:15", "12:20"],
+    categories: props.data.map((data) => util.getTime(data.timestamp)),
   },
   stroke: {
     curve: "smooth",
   },
 });
+
+watch(
+  () => props.data,
+  () => {
+    series.value[0].data = props.data.map((data) => data.value);
+
+    chartOptions.value = {
+      ...chartOptions.value,
+      xaxis: {
+        categories: props.data.map((data) => util.getTime(data.timestamp)),
+      },
+      title: {
+        text: `Werte angezeigt in ${props.data[0] && props.data[0].unit}`,
+      },
+    };
+  },
+  {
+    deep: true,
+    immediate: true,
+  }
+);
 </script>

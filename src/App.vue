@@ -9,21 +9,24 @@
     </ol>
     <section>
       <h2>API Section</h2>
-      <Chart />
+      <Chart :data="data" />
     </section>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { onMounted } from "vue";
+import { onMounted, ref } from "vue";
 import { useWebSocket } from "./services/WebSocketService";
 import api from "./api";
 import Chart from "./components/Chart.vue";
+import type { Data } from "./data";
 
 const { messages, connect } = useWebSocket("ws://localhost:8080/mqtt");
 
+const data = ref<Data[]>([]);
+
 onMounted(async () => {
   connect();
-  await api.data.getAll()
+  data.value = await api.data.getAll();
 });
 </script>
