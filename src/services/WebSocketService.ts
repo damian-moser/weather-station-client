@@ -1,33 +1,23 @@
-import { ref } from "vue";
+import { eventBus } from "../utils/event-bus";
+import type { Data } from "../models/data.model";
 
-const messages = ref([]);
+export const useWebSocket = (url: string) => {
+  const connect = () => {
+    const socket = new WebSocket(url);
 
-let socket;
-
-export function useWebSocket(url: string) {
-  function connect() {
-    socket = new WebSocket(url);
-
-    socket.onopen = () => {
-      console.log("✅ WebSocket verbunden!");
+    socket.onmessage = ({ data }) => {
+      try {
+        const parsed = JSON.parse(data) as Data;
+        eventBus.emit(parsed.type, parsed);
+      } catch (e) {
+        console.error("❌ Parse error:", e);
+      }
     };
 
-    socket.onmessage = (event: any) => {
-      console.log("📡 Neue MQTT-Nachricht:", event.data);
-      messages.value.unshift(event.data);
-    };
-
-    socket.onerror = (error) => {
-      console.error("❌ WebSocket Fehler:", error);
-    };
-
-    socket.onclose = () => {
-      console.log("⚠️ WebSocket Verbindung geschlossen.");
-    };
-  }
-
-  return {
-    messages,
-    connect,
+    socket.onopen = () => console.log(`🔌 Connected to ${url}`);
+    socket.onerror = (err) => console.error(`⚠️ WebSocket error:`, err);
+    socket.onclose = () => console.log(`🔌 Disconnected from ${url}`);
   };
-}
+
+  return { connect };
+};

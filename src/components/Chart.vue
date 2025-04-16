@@ -1,42 +1,41 @@
 <template>
-  <VueApexCharts
-    type="line"
-    height="350"
-    :options="chartOptions"
-    :series="series"
-  />
+  <VueApexCharts :options="chartOptions" :series="series" />
 </template>
 
 <script lang="ts" setup>
 import VueApexCharts from "vue3-apexcharts";
 import { ref, watch } from "vue";
-import type { Data } from "../data";
-import util from "../util";
+import type { Data } from "../models/data.model";
 
 const props = defineProps<{
   data: Data[];
+  topic: string;
 }>();
 
 const series = ref([
   {
-    name: "Wert",
+    name: "value",
     data: props.data.map((data) => data.value),
   },
 ]);
 
 const chartOptions = ref({
   chart: {
-    type: "line",
+    type: "area",
     height: 350,
   },
-  title: {
-    text: `Werte angezeigt in ${props.data[0] && props.data[0].unit}`,
+  markers: {
+    size: 0,
   },
-  xaxis: {
-    categories: props.data.map((data) => util.getTime(data.timestamp)),
+  title: {
+    text: props.topic,
   },
   stroke: {
     curve: "smooth",
+  },
+  xaxis: {
+    categories: props.data.map((data) => data.timestamp),
+    type: "datetime",
   },
 });
 
@@ -48,10 +47,8 @@ watch(
     chartOptions.value = {
       ...chartOptions.value,
       xaxis: {
-        categories: props.data.map((data) => util.getTime(data.timestamp)),
-      },
-      title: {
-        text: `Werte angezeigt in ${props.data[0] && props.data[0].unit}`,
+        categories: props.data.map((data) => data.timestamp),
+        type: "datetime",
       },
     };
   },
