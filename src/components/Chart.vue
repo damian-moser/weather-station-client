@@ -23,6 +23,9 @@ const chartOptions = ref({
   chart: {
     type: "area",
     height: 350,
+    zoom: {
+      enabled: false,
+    },
   },
   markers: {
     size: 0,
