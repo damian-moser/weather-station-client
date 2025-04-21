@@ -10,14 +10,16 @@ export const useWebSocket = (url: string) => {
         const parsed = JSON.parse(data) as Data;
         eventBus.emit(parsed.type, parsed);
       } catch (e) {
-        console.error("❌ Parse error:", e);
+        console.error("parse error:", e);
       }
     };
 
-    socket.onopen = () => console.log(`🔌 Connected to ${url}`);
-    socket.onerror = (err) => console.error(`⚠️ WebSocket error:`, err);
-    socket.onclose = () => console.log(`🔌 Disconnected from ${url}`);
+    socket.onopen = () => console.log(`connected to ${url}`);
+    socket.onerror = (err) => console.error(`WebSocket error:`, err);
+    socket.onclose = () => console.log(`disconnected from ${url}`);
   };
 
-  return { connect };
+  return {
+    connect,
+  };
 };

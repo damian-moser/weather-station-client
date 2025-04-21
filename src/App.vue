@@ -1,9 +1,7 @@
 <template>
-  <div class="container mt-4">
-    <h1 class="text-primary">MQTT Live Dashboard</h1>
-    <p>Empfängt MQTT-Daten in Echtzeit über WebSockets.</p>
+  <section>
     <DataChart v-for="topic of topics" :topic="topic" />
-  </div>
+  </section>
 </template>
 
 <script lang="ts" setup>
