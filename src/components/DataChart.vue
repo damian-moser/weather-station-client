@@ -1,5 +1,5 @@
 <template>
-  <Chart :data="data" :topic="topic" />
+  <Chart :data="data" :topic="topic" :color="color" />
 </template>
 <script lang="ts" setup>
 import { onBeforeUnmount, onMounted, ref } from "vue";
@@ -10,6 +10,7 @@ import { eventBus } from "../utils/event-bus";
 
 const props = defineProps<{
   topic: string;
+  color: string;
 }>();
 
 const data = ref<Data[]>([]);
